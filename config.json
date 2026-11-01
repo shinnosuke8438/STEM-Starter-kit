@@ -1,0 +1,30 @@
+{
+  "name": "STEM Kit",
+  "description": "Mục mở rộng dành cho bộ STEM Starter kit",
+  "libs": [
+    "stemkit_rgbled.py",
+    "stemkit_hcsr04.py",
+    "stemkit_sound_player.py",
+    "stemkit_motor.py",
+    "stemkit_mpr121.py",
+    "stemkit_mq.py",
+    "stemkit_pcf8574.py",
+    "stemkit_lcd1602.py",
+    "stemkit_dht20.py",
+    "stemkit_robocon.py",
+    "stemkit_remotecontrol.py",
+    "gamepad.py",
+    "stemkit_ssd1306.py",
+    "stemkit_rfid.py",
+    "stemkit_rfid_expansion.py"
+  ],
+  "blocks": [
+    "definition.js"
+  ],
+  "toolbox": "toolbox.xml",
+  "languages": {
+    "en": "languages/en.js",
+    "vi": "languages/vi.js"
+  },
+  "poster": "poster.png"
+}

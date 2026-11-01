@@ -1,0 +1,328 @@
+<xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+  <category id="stemkit" name="STEM KIT" colour="#44cbc6" icon="share-alt">
+    <label text="{{STEMKIT_CAT_MOTORS}}" web-class="blockLabelStyle"></label>
+    <block type="robot_move">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">50</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="robot_move_delay">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">50</field>
+        </shadow>
+      </value>
+      <value name="time">
+        <shadow type="math_number">
+          <field name="NUM">1</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="robot_move_motor">
+      <value name="left_wheel_speed">
+        <shadow type="math_number">
+          <field name="NUM">50</field>
+        </shadow>
+      </value>
+      <value name="right_wheel_speed">
+        <shadow type="math_number">
+          <field name="NUM">50</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="robot_stop"/>
+
+    <block type="servo_write_angle">
+      <value name="angle">
+        <shadow type="math_number">
+          <field name="NUM">90</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="servo360_write">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+    </block>
+
+    <sep gap="30"></sep>
+    <label text="LCD" web-class="blockLabelStyle"></label>
+    <block type="stemkit_lcd1602_display_sample">
+      <value name="data_name">      
+        <shadow type="text">
+          <field name="TEXT">Nhiet do</field>
+        </shadow>
+      </value>
+      <value name="data_value">
+        <shadow type="math_number">
+          <field name="NUM">25</field>
+        </shadow>
+      </value>
+      <value name="data_unit">     
+        <shadow type="text">
+          <field name="TEXT">*C</field>
+        </shadow>
+      </value>
+      <value name="X">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      <value name="Y">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="stemkit_lcd1602_display">
+      <value name="string">
+        <shadow type="text">
+          <field name="TEXT">Hello</field>
+        </shadow>
+      </value>
+      <value name="X">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      <value name="Y">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_lcd1602_clear"/>
+
+    <sep gap="30"></sep>
+    <label text="OLED" web-class="blockLabelStyle"></label>
+    
+    <block type="stemkit_oled_display_sample">
+      <value name="data_name">      
+        <shadow type="text">
+          <field name="TEXT">Nhiet do</field>
+        </shadow>
+      </value>
+      <value name="data_value">
+        <shadow type="math_number">
+          <field name="NUM">25</field>
+        </shadow>
+      </value>
+      <value name="data_unit">     
+        <shadow type="text">
+          <field name="TEXT">*C</field>
+        </shadow>
+      </value>
+      <value name="X">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      <value name="Y">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="stemkit_oled_display">
+      <value name="string">
+        <shadow type="text">
+          <field name="TEXT">Hello</field>
+        </shadow>
+      </value>
+      <value name="X">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      <value name="Y">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+      </block>
+    <block type="stemkit_oled_clear"/>
+
+    <sep gap="30"></sep>
+    <label text="{{STEMKIT_CAT_OUTPUT}}" web-class="blockLabelStyle"></label>
+
+    <block type="stemkit_mini_pump">
+      <value name="percent"><shadow type="math_number"><field name="NUM">70</field></shadow></value>
+    </block>
+    <block type="stemkit_sound_playtrack">
+      <value name="track">
+        <shadow type="math_number">
+          <field name="NUM">1</field>
+        </shadow>
+      </value>
+      <value name="vol">
+        <shadow type="math_number">
+          <field name="NUM">20</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="stemkit_led_tiny">
+      <value name="COLOR">
+        <shadow type="colour_picker">
+          <field name="COLOUR">#ff0000</field>
+        </shadow>
+      </value>
+    </block>
+
+    <sep gap="30"></sep>
+    <label text="{{STEMKIT_CAT_SENSOR}}" web-class="blockLabelStyle"></label>
+
+    <block type="stemkit_soil_sensor"/>
+    <block type="stemkit_ultrasonic_read"/>
+    <block type="stemkit_ultrasonic_checkdistance">
+      <value name="DISTANCE">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_gas_sensor"/>
+    <block type="stemkit_gas_detected"/>
+    
+
+    <sep gap="30"></sep>
+    <label text="KEYPAD" web-class="blockLabelStyle"></label>
+
+    <block type="stemkit_mpr121_check"/>
+    <block type="stemkit_mpr121_read">
+      <value name="VALUE">
+        <shadow type="text">
+          <field name="TEXT">1234#</field>
+        </shadow>
+      </value>
+    </block>    
+    
+    <block type="stemkit_mpr121_clear"/>
+    <block type="stemkit_mpr121_scan"/>
+    <block type="stemkit_mpr121_sound_off"/>
+    
+  </category>
+
+  <category id="stemkit-more" name="..." colour="#44cbc6" icon="ellipsis-h">
+
+    <sep gap="30"></sep>
+    <label text="Nâng cao" web-class="blockLabelStyle"></label>
+
+    <block type="stemkit_light_sensor"/>
+    <block type="stemkit_sound_sensor"/>
+    <block type="stemkit_dht_measure"/>
+    <block type="stemkit_dht_read"/>
+    <block type="robot_line_sensor_read_all"/>
+    <block type="stemkit_line5_read_all"/>
+    <block type="stemkit_line5_read"/>
+     
+    <block type="stemkit_relay"/>
+    <block type="stemkit_motion"/>
+    <block type="stemkit_water_sensor"/>
+
+    <sep gap="30"></sep>
+    <label text="RFID" web-class="blockLabelStyle"></label>
+
+    <block type="stemkit_scan_card"></block>
+    <block type="stemkit_scan_and_check">
+      <value name="list_name">
+        <shadow type="math_number">
+          <field name="NUM"></field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_scan_and_add_card">
+      <value name="list_name">
+        <shadow type="math_number">
+          <field name="NUM"></field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_scan_and_remove_card">
+      <value name="list_name">
+        <shadow type="math_number">
+          <field name="NUM"></field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_clear_list">
+      <value name="list_name">
+        <shadow type="math_number">
+          <field name="NUM"></field>
+        </shadow>
+      </value>
+    </block>
+
+    <sep gap="30"></sep>
+    <label text="Gamepad" web-class="blockLabelStyle"></label>
+
+    <block type="stemkit_remote_control_init"/>
+    <block type="stemkit_remote_control_processing"/>
+    <block type="stemkit_remote_control_on_button_pressed" />
+
+   
+
+    <label text="ROBOCON" web-class="blockLabelStyle"></label>
+    <block type="stemkit_robocon_line_sensor_type"/>
+    
+    <block type="stemkit_robocon_follow_line_until_cross">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">30</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_robocon_turn_until_line_detected_then">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">30</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="stemkit_robocon_follow_line_until_end">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">30</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="stemkit_robocon_follow_line_delay">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">30</field>
+        </shadow>
+      </value>
+      <value name="timeout">
+        <shadow type="math_number">
+          <field name="NUM">5</field>
+        </shadow>
+      </value>
+    </block>
+
+    <block type="stemkit_robocon_follow_line_until">
+      <value name="speed">
+        <shadow type="math_number">
+          <field name="NUM">30</field>
+        </shadow>
+      </value>
+      <value name="condition">
+      </value>
+      <value name="timeout">
+        <shadow type="math_number">
+          <field name="NUM">5</field>
+        </shadow>
+      </value>
+    </block>
+
+  </category>
+
+</xml>
