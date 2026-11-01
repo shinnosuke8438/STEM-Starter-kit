@@ -1,6 +1,6 @@
 """
-MicroPython MPR121 capacitive touch keypad and breakout board driver
-Bản tối ưu cao cấp cho giao diện kéo thả Blockly & Yolo:Bit Sound
+MicroPython MPR121 capacitive touch keypad
+Bản tối ưu v3: Chuyển âm thanh sang Main Thread để vượt rào cản hệ điều hành
 """
 from yolobit import *
 from micropython import const
@@ -40,10 +40,9 @@ class MPR121:
             self.i2c = i2c
         self.address = address
         self._input = ''
-        self.sound = True # BẬT ÂM THANH MẶC ĐỊNH
-        
-        self._current_key = -1 # Bộ nhớ đệm cho Blockly
-        
+        self.sound = True 
+        self._current_key = -1
+        self._need_beep = False # Cờ báo hiệu có phím mới
         self.reset()
         _thread.start_new_thread(self.run, ())
 
@@ -121,7 +120,7 @@ class MPR121:
             z = 4
         elif z == 11:
             z = 8
-        else :
+        else:
             y = 3-(z//3)
             if z % 3 == 0:
                 y = y + 1
@@ -132,51 +131,49 @@ class MPR121:
         return (t & (1 << z)) != 0
     
     def run(self):
-        last_pressed = [] 
-        buzzer = Pin(pin0.pin, Pin.OUT) # Trực tiếp gọi chân còi Yolo:Bit (P0)
-        
+        last_pressed = []
         while True:
             try:
                 current_pressed = []
-                touched = False
-                current_k = -1
                 
                 for i in range(len(self.KEYS)):
                     if self.is_touched(i):
                         current_pressed.append(i)
-                        current_k = i
+                        self._current_key = i
                         
+                        # Chỉ xử lý khi đây là một cú bấm hoàn toàn mới
                         if i not in last_pressed:
                             self._input += self.KEYS[i]
-                            touched = True
+                            self._need_beep = True # Phất cờ yêu cầu kêu bíp
                 
-                self._current_key = current_k
                 last_pressed = current_pressed
                 
-                if touched:
-                    if self.sound:
-                        # TẠO ÂM THANH BÍP THỦ CÔNG: AN TOÀN 100% CHO ESP32
-                        for _ in range(80): 
-                            buzzer.value(1)
-                            time.sleep_us(180)
-                            buzzer.value(0)
-                            time.sleep_us(180)
-                        time.sleep_ms(150)
-                    else:
-                        time.sleep_ms(150)
-                else:
-                    time.sleep_ms(50)
+                # Trả về -1 nếu không có phím nào đang bị đè
+                if not current_pressed:
+                    self._current_key = -1
+                    
+                time.sleep_ms(50)
             except OSError:
                 time.sleep_ms(100)
     
+    def _check_beep(self):
+        # Hàm xử lý âm thanh ở luồng chính (Main Thread) an toàn tuyệt đối
+        if self._need_beep:
+            self._need_beep = False
+            if self.sound:
+                import music
+                # wait=False giúp phát nhạc mà không làm khựng chương trình
+                music.play(['G4:0.3'], wait=False) 
+
     def scan(self):
-        # Đã cách ly hoàn toàn khối lệnh Blockly khỏi phần cứng I2C
+        self._check_beep()
         return self._current_key
 
     def clear(self):
         self._input = ''
 
     def read(self):
+        self._check_beep()
         return self._input
 
 touchpad = MPR121()
