@@ -1,6 +1,6 @@
 """
 MicroPython MPR121 capacitive touch keypad
-Bản v6: Trả lại toàn quyền logic cho người dùng Blockly, chỉ giữ còi PWM chống treo
+Bản V7: Dùng thư viện music của V3 nhưng chặn lỗi tràn luồng (Crash)
 """
 from yolobit import *
 from micropython import const
@@ -138,12 +138,10 @@ class MPR121:
                         self._current_key = i
                         
                         if i not in last_pressed:
-                            # Trả lại toàn quyền ghi nhận mọi phím, không tự xóa
                             self._input += self.KEYS[i]
                             self._need_beep = True 
                 
                 last_pressed = current_pressed
-                
                 if not current_pressed:
                     self._current_key = -1
                     
@@ -155,16 +153,12 @@ class MPR121:
         if self._need_beep:
             self._need_beep = False
             if self.sound:
-                from machine import Pin, PWM
-                import time
+                import music
                 try:
-                    buzzer = PWM(Pin(pin0.pin))
-                    buzzer.freq(2000)
-                    buzzer.duty(512)
-                    time.sleep_ms(100)
-                    buzzer.duty(0)
-                    buzzer.deinit()
-                except Exception:
+                    # Dùng thư viện music của V3 nhưng để wait=True
+                    # Điều này giúp phát âm thanh an toàn mà không làm sập luồng (Crash)
+                    music.play(['G4:0.3'], wait=True)
+                except:
                     pass
 
     def scan(self):
