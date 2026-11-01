@@ -1,6 +1,6 @@
 """
 MicroPython MPR121 capacitive touch keypad
-Bản tối ưu v3: Chuyển âm thanh sang Main Thread để vượt rào cản hệ điều hành
+Bản tối ưu v4: Dùng Hardware PWM an toàn trong luồng chính
 """
 from yolobit import *
 from micropython import const
@@ -42,7 +42,7 @@ class MPR121:
         self._input = ''
         self.sound = True 
         self._current_key = -1
-        self._need_beep = False # Cờ báo hiệu có phím mới
+        self._need_beep = False 
         self.reset()
         _thread.start_new_thread(self.run, ())
 
@@ -141,14 +141,12 @@ class MPR121:
                         current_pressed.append(i)
                         self._current_key = i
                         
-                        # Chỉ xử lý khi đây là một cú bấm hoàn toàn mới
                         if i not in last_pressed:
                             self._input += self.KEYS[i]
-                            self._need_beep = True # Phất cờ yêu cầu kêu bíp
+                            self._need_beep = True 
                 
                 last_pressed = current_pressed
                 
-                # Trả về -1 nếu không có phím nào đang bị đè
                 if not current_pressed:
                     self._current_key = -1
                     
@@ -157,13 +155,20 @@ class MPR121:
                 time.sleep_ms(100)
     
     def _check_beep(self):
-        # Hàm xử lý âm thanh ở luồng chính (Main Thread) an toàn tuyệt đối
         if self._need_beep:
             self._need_beep = False
             if self.sound:
-                import music
-                # wait=False giúp phát nhạc mà không làm khựng chương trình
-                music.play(['G4:0.3'], wait=False) 
+                from machine import Pin, PWM
+                import time
+                try:
+                    buzzer = PWM(Pin(0))
+                    buzzer.freq(2000)
+                    buzzer.duty(512)
+                    time.sleep_ms(80)
+                    buzzer.duty(0)
+                    buzzer.deinit()
+                except Exception:
+                    pass
 
     def scan(self):
         self._check_beep()
