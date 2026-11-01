@@ -1,13 +1,12 @@
 """
 MicroPython MPR121 capacitive touch keypad and breakout board driver
-Optimized for Yolo:Bit & Sound JQ8400 Module (Bật âm thanh bíp)
+Bản tối ưu cao cấp cho giao diện kéo thả Blockly & Yolo:Bit Sound
 """
 from yolobit import *
 from micropython import const
 import ustruct, time
 import _thread
 from machine import SoftI2C, Pin
-import music  # Đã khôi phục thư viện music để dùng còi báo
 
 MPR121_TOUCH_STATUS = const(0x00)
 MPR121_ELECTRODE_FILTERED_DATA = const(0x04)
@@ -41,7 +40,10 @@ class MPR121:
             self.i2c = i2c
         self.address = address
         self._input = ''
-        self.sound = True  # BẬT LẠI ÂM THANH MẶC ĐỊNH
+        self.sound = True # BẬT ÂM THANH MẶC ĐỊNH
+        
+        self._current_key = -1 # Bộ nhớ đệm cho Blockly
+        
         self.reset()
         _thread.start_new_thread(self.run, ())
 
@@ -65,10 +67,7 @@ class MPR121:
     def reset(self):
         self._register8(MPR121_SOFT_RESET, 0x63)
         self._register8(MPR121_ELECTRODE_CONFIG, 0x00)
-
-        # Chống chạm nhầm: Ngưỡng nhận diện cao hơn
         self.set_thresholds(40, 20)
-
         self._register8(MPR121_MAX_HALF_DELTA_RISING, 0x01)
         self._register8(MPR121_MAX_HALF_DELTA_FALLING, 0x01)
         self._register8(MPR121_NOISE_HALF_DELTA_RISING, 0x01)
@@ -80,10 +79,7 @@ class MPR121:
         self._register8(MPR121_FILTER_DELAY_COUNT_RISING, 0x00)
         self._register8(MPR121_FILTER_DELAY_COUNT_FALLING, 0x00)
         self._register8(MPR121_FILTER_DELAY_COUNT_TOUCHED, 0x00)
-        
-        # Bật khử nhiễu (Debounce)
         self._register8(MPR121_DEBOUNCE, 0x33)
-        
         self._register8(MPR121_CONFIG1, 0x10)
         self._register8(MPR121_CONFIG2, 0x20)
         self._register8(MPR121_ELECTRODE_CONFIG, 0x8F)
@@ -106,14 +102,7 @@ class MPR121:
         if config != 0:
             self._register8(MPR121_ELECTRODE_CONFIG, config)
 
-    def filtered_data(self, electrode):
-        return self._register16(MPR121_ELECTRODE_FILTERED_DATA + electrode * 2)
-
-    def baseline_data(self, electrode):
-        return self._register8(MPR121_BASELINE_VALUE + electrode) << 2
-
     def touched(self):
-        # Chống văng mạch khi cáp rung lắc
         try:
             return self._register16(MPR121_TOUCH_STATUS)
         except OSError:
@@ -144,26 +133,35 @@ class MPR121:
     
     def run(self):
         last_pressed = [] 
+        buzzer = Pin(pin0.pin, Pin.OUT) # Trực tiếp gọi chân còi Yolo:Bit (P0)
+        
         while True:
             try:
                 current_pressed = []
                 touched = False
+                current_k = -1
                 
                 for i in range(len(self.KEYS)):
                     if self.is_touched(i):
                         current_pressed.append(i)
+                        current_k = i
                         
                         if i not in last_pressed:
                             self._input += self.KEYS[i]
                             touched = True
                 
+                self._current_key = current_k
                 last_pressed = current_pressed
                 
                 if touched:
                     if self.sound:
-                        # Tiếng bíp cực ngắn và cao để báo hiệu (như tiếng gõ phím)
-                        music.play(['G4:0.5'], wait=True)
-                        time.sleep_ms(200)
+                        # TẠO ÂM THANH BÍP THỦ CÔNG: AN TOÀN 100% CHO ESP32
+                        for _ in range(80): 
+                            buzzer.value(1)
+                            time.sleep_us(180)
+                            buzzer.value(0)
+                            time.sleep_us(180)
+                        time.sleep_ms(150)
                     else:
                         time.sleep_ms(150)
                 else:
@@ -172,11 +170,8 @@ class MPR121:
                 time.sleep_ms(100)
     
     def scan(self):
-        for i in range(len(self.KEYS)):
-            if self.is_touched(i):
-                time.sleep_ms(200)
-                return i
-        return -1
+        # Đã cách ly hoàn toàn khối lệnh Blockly khỏi phần cứng I2C
+        return self._current_key
 
     def clear(self):
         self._input = ''
