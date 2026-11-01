@@ -162,8 +162,8 @@ class MPR121:
                 if touched:
                     if self.sound:
                         # Tiếng bíp cực ngắn và cao để báo hiệu (như tiếng gõ phím)
-                        music.play(['G5:1'], wait=True)
-                        time.sleep_ms(150)
+                        music.play(['G4:0.5'], wait=True)
+                        time.sleep_ms(200)
                     else:
                         time.sleep_ms(150)
                 else:
