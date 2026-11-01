@@ -1,6 +1,6 @@
 """
 MicroPython MPR121 capacitive touch keypad
-Bản tối ưu v4: Dùng Hardware PWM an toàn trong luồng chính
+Bản v6: Trả lại toàn quyền logic cho người dùng Blockly, chỉ giữ còi PWM chống treo
 """
 from yolobit import *
 from micropython import const
@@ -89,15 +89,12 @@ class MPR121:
             return
         f = 0 if electrode is None else electrode
         t = 12 if electrode is None else electrode + 1
-
         config = self._register8(MPR121_ELECTRODE_CONFIG)
         if config != 0:
             self._register8(MPR121_ELECTRODE_CONFIG, 0)
-
         for i in range(f, t):
             self._register8(MPR121_TOUCH_THRESHOLD + i * 2, touch)
             self._register8(MPR121_RELEASE_THRESHOLD + i * 2, release)
-
         if config != 0:
             self._register8(MPR121_ELECTRODE_CONFIG, config)
 
@@ -135,13 +132,13 @@ class MPR121:
         while True:
             try:
                 current_pressed = []
-                
                 for i in range(len(self.KEYS)):
                     if self.is_touched(i):
                         current_pressed.append(i)
                         self._current_key = i
                         
                         if i not in last_pressed:
+                            # Trả lại toàn quyền ghi nhận mọi phím, không tự xóa
                             self._input += self.KEYS[i]
                             self._need_beep = True 
                 
@@ -161,10 +158,10 @@ class MPR121:
                 from machine import Pin, PWM
                 import time
                 try:
-                    buzzer = PWM(Pin(0))
+                    buzzer = PWM(Pin(pin0.pin))
                     buzzer.freq(2000)
                     buzzer.duty(512)
-                    time.sleep_ms(80)
+                    time.sleep_ms(100)
                     buzzer.duty(0)
                     buzzer.deinit()
                 except Exception:
