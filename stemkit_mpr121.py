@@ -157,7 +157,7 @@ class MPR121:
             if self.sound:
                 import music
                 try:
-                    music.play(['G4:0.3'], wait=True)
+                    music.play(['G5:0.3'], wait=True)
                 except:
                     pass
 
