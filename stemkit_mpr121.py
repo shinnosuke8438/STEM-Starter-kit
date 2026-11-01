@@ -1,6 +1,6 @@
 """
 MicroPython MPR121 capacitive touch keypad
-Bản V7: Dùng thư viện music của V3 nhưng chặn lỗi tràn luồng (Crash)
+Bản V8: Chống dội phím nhanh, bảo vệ bộ đệm UART cho JQ8400
 """
 from yolobit import *
 from micropython import const
@@ -138,14 +138,16 @@ class MPR121:
                         self._current_key = i
                         
                         if i not in last_pressed:
-                            self._input += self.KEYS[i]
-                            self._need_beep = True 
+                            # Giới hạn độ dài chuỗi tối đa 10 ký tự để chống tràn bộ nhớ khi nhấn loạn
+                            if len(self._input) < 10:
+                                self._input += self.KEYS[i]
+                                self._need_beep = True 
                 
                 last_pressed = current_pressed
                 if not current_pressed:
                     self._current_key = -1
                     
-                time.sleep_ms(50)
+                time.sleep_ms(60) # Tăng nhẹ thời gian quét để ổn định tín hiệu phím
             except OSError:
                 time.sleep_ms(100)
     
@@ -155,8 +157,6 @@ class MPR121:
             if self.sound:
                 import music
                 try:
-                    # Dùng thư viện music của V3 nhưng để wait=True
-                    # Điều này giúp phát âm thanh an toàn mà không làm sập luồng (Crash)
                     music.play(['G4:0.3'], wait=True)
                 except:
                     pass
